@@ -1,0 +1,198 @@
+@import url('https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500;700&family=Noto+Sans+JP:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap');
+
+:root {
+  --bg: #eef1ec;
+  --surface: #fbfaf6;
+  --surface-2: #ffffff;
+  --line: #d9ddd3;
+  --ink: #1f2d3d;
+  --ink-soft: #4b5768;
+  --muted: #7a8577;
+  --accent: #2c4a6e;
+  --accent-soft: #dfe7ee;
+  --answer: #a8341f;
+  --answer-soft: #f6e2dc;
+  --stamp-o: #2f6b4f;
+  --stamp-x: #a8341f;
+  --shadow: 0 1px 2px rgba(31,45,61,.06), 0 4px 14px rgba(31,45,61,.05);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #14181a;
+    --surface: #1b2023;
+    --surface-2: #20262a;
+    --line: #333b3d;
+    --ink: #e9ece6;
+    --ink-soft: #b9c1ba;
+    --muted: #8b968d;
+    --accent: #8fb4dd;
+    --accent-soft: #263341;
+    --answer: #e2775f;
+    --answer-soft: #3a2620;
+    --stamp-o: #6fbf94;
+    --stamp-x: #e2775f;
+    --shadow: 0 1px 2px rgba(0,0,0,.3), 0 4px 14px rgba(0,0,0,.25);
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #14181a;
+  --surface: #1b2023;
+  --surface-2: #20262a;
+  --line: #333b3d;
+  --ink: #e9ece6;
+  --ink-soft: #b9c1ba;
+  --muted: #8b968d;
+  --accent: #8fb4dd;
+  --accent-soft: #263341;
+  --answer: #e2775f;
+  --answer-soft: #3a2620;
+  --stamp-o: #6fbf94;
+  --stamp-x: #e2775f;
+  --shadow: 0 1px 2px rgba(0,0,0,.3), 0 4px 14px rgba(0,0,0,.25);
+}
+
+* { box-sizing: border-box; }
+html, body { background: var(--bg); height: 100%; }
+body {
+  margin: 0;
+  padding-inline: 16px;
+  padding-block: 12px;
+  font-family: "Noto Sans JP", "Hiragino Sans", sans-serif;
+  color: var(--ink);
+  background: var(--bg);
+  -webkit-font-smoothing: antialiased;
+}
+.wrap { max-width: 720px; margin: 0 auto; }
+
+header.top {
+  position: sticky;
+  top: env(safe-area-inset-top, 0px);
+  z-index: 10;
+  background: var(--bg);
+  padding-block: 10px 8px;
+  margin-inline: -16px;
+  padding-inline: 16px;
+  border-bottom: 1px solid var(--line);
+}
+.eyebrow {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11px;
+  letter-spacing: .08em;
+  color: var(--muted);
+  text-transform: uppercase;
+}
+h1 {
+  font-family: "Shippori Mincho", serif;
+  font-weight: 700;
+  font-size: clamp(20px, 5vw, 26px);
+  margin: 2px 0 10px;
+  text-wrap: balance;
+  color: var(--ink);
+}
+.controls {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 2px;
+  scrollbar-width: none;
+}
+.controls::-webkit-scrollbar { display: none; }
+.pill {
+  flex: none;
+  font-family: "Noto Sans JP", sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--ink-soft);
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.pill.count {
+  background: var(--accent-soft);
+  color: var(--accent);
+  border-color: transparent;
+}
+.toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 8px;
+}
+.toggle-label {
+  font-size: 12.5px;
+  color: var(--muted);
+}
+
+.glasses-status {
+  margin-top: 8px;
+  font-size: 11.5px;
+  font-family: "JetBrains Mono", monospace;
+  color: var(--accent);
+  background: var(--accent-soft);
+  border-radius: 6px;
+  padding: 5px 8px;
+}
+
+section.chapter {
+  margin-top: 26px;
+  scroll-margin-top: 96px;
+}
+.chapter-head {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  margin-bottom: 10px;
+  padding-bottom: 6px;
+  border-bottom: 2px solid var(--accent);
+}
+.chapter-head .ja {
+  font-family: "Shippori Mincho", serif;
+  font-weight: 700;
+  font-size: 19px;
+  color: var(--accent);
+}
+.chapter-head .n {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.para {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  padding-block: 14px;
+  border-bottom: 1px solid var(--line);
+}
+.para:last-child { border-bottom: none; }
+.para .n {
+  flex: none;
+  min-width: 2.4em;
+  padding-top: 2px;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 12px;
+  color: var(--muted);
+}
+.para .t {
+  flex: 1;
+  font-size: 15.5px;
+  line-height: 1.85;
+  color: var(--ink);
+}
+
+footer {
+  margin: 30px 0 10px;
+  text-align: center;
+  font-size: 11.5px;
+  color: var(--muted);
+  font-family: "JetBrains Mono", monospace;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; }
+}

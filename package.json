@@ -1,0 +1,28 @@
+{
+  "name": "evenapp",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "dev": "vite --host 0.0.0.0 --port 5173",
+    "build": "vite build",
+    "server": "node server/index.js",
+    "qr": "evenhub qr --url http://localhost:5173",
+    "pack": "vite build && evenhub pack app.json dist -o ibt2026check.ehpk"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@evenrealities/even_hub_sdk": "^0.0.10",
+    "cors": "^2.8.6",
+    "express": "^5.2.1"
+  },
+  "devDependencies": {
+    "@evenrealities/evenhub-cli": "^0.1.13",
+    "@types/express": "^5.0.6",
+    "@types/node": "^25.6.0",
+    "typescript": "^6.0.3",
+    "vite": "^8.0.10"
+  }
+}
