@@ -3,3 +3,4 @@ dist/
 .env
 *.ehpk
 .claude/settings.local.json
+exports/

@@ -8,28 +8,68 @@ import {
   TextContainerProperty,
   type List_ItemEvent,
 } from '@evenrealities/even_hub_sdk';
-import proseData from './data/prose.json';
+import studyData from './data/study.json';
 
-type ChapterProse = {
+type ChapterStudy = {
   category: string;
   label: string;
-  paragraphs: string[];
+  paragraphs: string[]; // contains {{term}} markers around key facts
 };
 
-const chapters = proseData as ChapterProse[];
+const chapters = studyData as ChapterStudy[];
+
+const BLANK_MARKER = /\{\{(.+?)\}\}/g;
+// Roughly how many of a paragraph's marked terms get blanked out each time
+// test mode is switched on — re-rolled on every toggle for variety.
+const BLANK_CHANCE = 0.65;
 
 function escapeHtml(s: string): string {
   return s.replace(/[&<>]/g, (m) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[m] as string));
 }
 
+function stripMarkers(text: string): string {
+  return text.replace(BLANK_MARKER, '$1');
+}
+
+type Segment = { text: string; blank: boolean };
+
+function splitSegments(text: string): Segment[] {
+  const segments: Segment[] = [];
+  let lastIndex = 0;
+  for (const match of text.matchAll(BLANK_MARKER)) {
+    const index = match.index ?? 0;
+    if (index > lastIndex) segments.push({ text: text.slice(lastIndex, index), blank: false });
+    segments.push({ text: match[1], blank: true });
+    lastIndex = index + match[0].length;
+  }
+  if (lastIndex < text.length) segments.push({ text: text.slice(lastIndex), blank: false });
+  return segments;
+}
+
+function renderParagraphHtml(text: string, testMode: boolean): string {
+  return splitSegments(text)
+    .map((seg) => {
+      if (!seg.blank) return escapeHtml(seg.text);
+      if (!testMode) return escapeHtml(seg.text);
+      const isHidden = Math.random() < BLANK_CHANCE;
+      const cls = isHidden ? 'blank hidden' : 'blank';
+      return `<span class="${cls}">${escapeHtml(seg.text)}</span>`;
+    })
+    .join('');
+}
+
 // ---------- Book view (phone WebView / plain browser) ----------
+
+let testMode = false;
 
 function renderBook() {
   const nav = document.getElementById('chapterNav')!;
   const content = document.getElementById('content')!;
   const totalParas = chapters.reduce((n, c) => n + c.paragraphs.length, 0);
 
-  document.getElementById('progressLabel')!.textContent = `全${totalParas}項目・出そうな論点を通し読み`;
+  document.getElementById('progressLabel')!.textContent = testMode
+    ? '全53項目・タップで答えを表示'
+    : '全53項目・出そうな論点を通し読み';
 
   nav.innerHTML =
     `<a class="pill count" href="#top">全${totalParas}項目</a>` +
@@ -48,13 +88,29 @@ function renderBook() {
               (p, i) => `
             <div class="para">
               <span class="n">${String(i + 1).padStart(2, '0')}</span>
-              <div class="t">${escapeHtml(p)}</div>
+              <div class="t">${renderParagraphHtml(p, testMode)}</div>
             </div>`,
             )
             .join('')}
         </section>`,
     )
     .join('');
+}
+
+function setupTestModeToggle() {
+  const toggle = document.getElementById('testToggle') as HTMLButtonElement;
+  toggle.addEventListener('click', () => {
+    testMode = !testMode;
+    toggle.setAttribute('aria-pressed', String(testMode));
+    renderBook();
+  });
+
+  document.getElementById('content')!.addEventListener('click', (e) => {
+    const target = e.target as HTMLElement;
+    if (target.classList.contains('blank')) {
+      target.classList.toggle('hidden');
+    }
+  });
 }
 
 // ---------- Glasses HUD view (EvenG2 lenses, via glassesMenu launch) ----------
@@ -71,14 +127,15 @@ const glassesState = {
   pageIndex: 0,
 };
 
-// Each chapter's paragraphs, pre-split into HUD-sized pages.
+// Each chapter's paragraphs (plain text, markers stripped), pre-split into HUD-sized pages.
 let chapterPages: string[][] = [];
 
 function buildChapterPages(): string[][] {
   return chapters.map((c) => {
     const pages: string[] = [];
     let buf = '';
-    for (const para of c.paragraphs) {
+    for (const raw of c.paragraphs) {
+      const para = stripMarkers(raw);
       const candidate = buf ? `${buf}\n\n${para}` : para;
       if (candidate.length > PAGE_CHAR_LIMIT && buf) {
         pages.push(buf);
@@ -225,6 +282,7 @@ async function tryInitGlasses() {
 
 function main() {
   renderBook();
+  setupTestModeToggle();
   tryInitGlasses();
 }
 

@@ -127,6 +127,28 @@ h1 {
   font-size: 12.5px;
   color: var(--muted);
 }
+.switch {
+  position: relative;
+  width: 40px;
+  height: 22px;
+  border-radius: 999px;
+  background: var(--line);
+  border: none;
+  cursor: pointer;
+  flex: none;
+}
+.switch::after {
+  content: "";
+  position: absolute;
+  top: 2px; left: 2px;
+  width: 18px; height: 18px;
+  border-radius: 50%;
+  background: var(--surface-2);
+  box-shadow: var(--shadow);
+  transition: transform .15s ease;
+}
+.switch[aria-pressed="true"] { background: var(--answer); }
+.switch[aria-pressed="true"]::after { transform: translateX(18px); }
 
 .glasses-status {
   margin-top: 8px;
@@ -184,6 +206,23 @@ section.chapter {
   line-height: 1.85;
   color: var(--ink);
 }
+
+.blank {
+  display: inline-block;
+  font-weight: 600;
+  color: var(--answer);
+  background: var(--answer-soft);
+  border-radius: 4px;
+  padding: 0 4px;
+  cursor: pointer;
+}
+.blank.hidden {
+  color: transparent;
+  background: var(--line);
+  border-radius: 4px;
+  user-select: none;
+}
+.blank.hidden::selection { color: transparent; }
 
 footer {
   margin: 30px 0 10px;
